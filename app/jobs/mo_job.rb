@@ -29,7 +29,6 @@ class MoJob < ApplicationJob
     counter = 0
     begin
       counter += 1
-      byebug 
       @@sftp = Net::SFTP.start('moftp.mo.gov', Rails.application.credentials[:missouri_username], password: Rails.application.credentials[:missouri_password], number_of_password_prompts: 0 )
 
     rescue Net::SSH::AuthenticationFailed 
