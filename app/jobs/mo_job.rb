@@ -6,7 +6,7 @@ class MoJob < ApplicationJob
   def perform(*args)
     missouri = MoJob.new  
     missouri.login 
-    missouri.get_files 
+    missouri.get_files  
     missouri.create_missouri_data 
     missouri.check_data 
     missouri.logout
@@ -26,40 +26,40 @@ class MoJob < ApplicationJob
 
 
   def login
-    counter = 0
-    begin
-      counter += 1
-      @@sftp = Net::SFTP.start('moftp.mo.gov', Rails.application.credentials[:missouri_username], password: Rails.application.credentials[:missouri_password], number_of_password_prompts: 0 )
-
+    puts "logging in"
+    tries ||= 3
+    @@sftp = Net::SFTP.start('moftp.mo.gov', Rails.application.credentials[:missouri_username], password: Rails.application.credentials[:missouri_password], number_of_password_prompts: 0 )
+    puts "logon successful!"
     rescue Net::SSH::AuthenticationFailed 
-   
-    retry if counter <=2
-    ensure     
-      UserMailer.login_error.deliver_now if Net::SSH::AuthenticationFailed
-    end
+      tries -= 1
+      if tries > 0  
+        puts "Trying again: #{tries}"
+        retry
+      else
+        puts "Logon failed. Try again later."
+        UserMailer.login_error.deliver_now!
+        @@sftp = nil
+        return
+      end
   end
 
 
   def get_files 
+    puts "getting files..."
     @@sftp.dir.foreach('/Distribution/dor/modlpool_daily/') do |entry|
       download = @@sftp.download!("/Distribution/dor/modlpool_daily/#{entry.name}")
       @file_names << "#{entry.name}_#{date_time}"
       @downloads << download
-      puts "getting files"
     end
+    puts "files downloaded!"
     @sorted_downloads = downloads.sort 
   end
 
 
   def create_missouri_data
-    missouri_data = MissouriDatum.new(file_small: @file_names[1], file_large: @file_names[0])
-     if missouri_data.save 
-     parse_data
-      puts "Instance saved!"
-    else
-      puts "Instance did not save!"
-      perform 
-    end
+    missouri_data = MissouriDatum.create(file_small: @file_names[1], file_large: @file_names[0])
+    puts "Instance saved!"
+    
   end 
 
 
@@ -80,12 +80,14 @@ class MoJob < ApplicationJob
       @downloads.each_with_index do |download, index|
         obj = s3.bucket('missouridata').object("new/#{file_names[index]}")
         @file_status = "new"
+        puts "new file"
         upload(obj, download)
       end
     else      
       downloads.each_with_index do |download, index|
         obj = s3.bucket('missouridata').object("same/#{file_names[index]}")
         @file_status = "same"
+        puts "same file"
         upload(obj, download)
       end
     end 
