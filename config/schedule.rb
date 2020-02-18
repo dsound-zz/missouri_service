@@ -22,7 +22,7 @@
 # set :environment, "development"
 set :output, "log/cron.log"
 
-every :day, at: ['11:00 am', '11:00 pm'] do 
-# every :hour do 
+# every :day, at: ['11:00 am', '11:00 pm'] do 
+every 3.hours do 
     rake :update_missouri
 end

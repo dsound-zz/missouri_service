@@ -1,0 +1,29 @@
+1REPORT NO. 01                                      MISSOURI DEPARTMENT OF REVENUE                                12/09/19 PAGE     1
+ DI35I51-01                                           INFORMATION SERVICES BUREAU                                 21.49.18
+                                                         DRIVER RECORD INQUIRY                                    REQ# 2006-551
+                                                   DAILY MODL UPDATE RECORDS SUMMARY
+  ================================================================================================================================
+                                             ===== DATASET NAME =====                 NUMBER OF RECORDS
+
+                            A.         BASIC DDRV RECORDS WRITTEN TO FILE:                      61,854
+                            B.         BASIC ADDR RECORDS WRITTEN TO FILE:                      25,088
+
+                            C.         ACTION RECORDS WRITTEN TO FILE:                          26,281
+                            D.         LIC ISSUE RECORDS WRITTEN TO FILE:                       43,601
+                            E.         POINTS RECORDS WRITTEN TO FILE:                          38,062
+                            F.         PRIV RECORDS WRITTEN TO FILE:                            19,689
+
+                            G.         DLEHCVHF RECORDS WRITTEN TO FILE:                         1,608
+                            H.         DLEHCVH3 RECORDS WRITTEN TO FILE:                             4
+                            I.         DLEHWDRL RECORDS WRITTEN TO FILE:                             0
+
+                            J.         DLIHCVHF RECORDS WRITTEN TO FILE:                            71
+                            K.         DLIHCVH3 RECORDS WRITTEN TO FILE:                         1,944
+                            L.         DLIHWDRL RECORDS WRITTEN TO FILE:                         1,213
+                            M.         DLIHACC  RECORDS WRITTEN TO FILE:                           494
+                            N.         DLIHAKA  RECORDS WRITTEN TO FILE:                         4,919
+
+                                            = TOTAL RECORDS PROCESSED =                          224,828
+
+0                                     TOTAL VARIABLE LENGTH RECORDS WRITTEN =                     25,526
+1  C750009 RECORDS WRITTEN FOR REPORT 01 --          28
