@@ -1,7 +1,6 @@
 class MoJob < ApplicationJob
   queue_as :default
 
-  # missouri_credentials: { missouri_username: DOR.Edward.Darmody, missouri_password: runNYMarathon@2020 }
 
 
   def perform(*args)
