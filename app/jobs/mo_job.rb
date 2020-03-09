@@ -2,7 +2,7 @@ class MoJob < ApplicationJob
   queue_as :default
 
 
-
+  #execute all methods to get missouri files and send email of status
   def perform(*args)
     missouri = MoJob.new  
     missouri.login 
