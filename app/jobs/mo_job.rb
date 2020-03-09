@@ -11,10 +11,12 @@ class MoJob < ApplicationJob
     missouri.check_data 
     missouri.logout
     @file_status = "Unknown"
+    MissouriDatum.destroy_all 
   end
 
   attr_accessor  :s3, :date_time, :file_names, :downloads, :sorted_downloads
 
+  # initialize instance of MoJob
   def initialize 
     @s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: Rails.application.credentials.dig(:aws, :access_key_id), secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key))
     @date_time = Time.new 
@@ -24,7 +26,7 @@ class MoJob < ApplicationJob
   end 
 
 
-
+  # login to 'moftp.mo.gov', the sftp server. If error, email notice. 
   def login
     puts "logging in"
     tries ||= 3
@@ -43,7 +45,7 @@ class MoJob < ApplicationJob
       end
   end
 
-
+  # get files from sftp server and push in to @downloads
   def get_files 
     puts "getting files..."
     @@sftp.dir.foreach('/Distribution/dor/modlpool_daily/') do |entry|
@@ -55,14 +57,13 @@ class MoJob < ApplicationJob
     @sorted_downloads = downloads.sort 
   end
 
-
+  # create saved instance of missouri data in ActiveRecord model MissouriDatum
   def create_missouri_data
     missouri_data = MissouriDatum.create(file_small: @file_names[1], file_large: @file_names[0])
     puts "Instance saved!"
-    
   end 
 
-
+  # parse files based on rather it's a new file from the last downloaded or the same
   def parse_data
     puts "now parsing"
     parsed_file = @downloads[0].split(' ', -1) 
@@ -74,7 +75,7 @@ class MoJob < ApplicationJob
     end 
   end
 
-
+  # check data whether same or new and upload to coresponding file on AWS S3 bucket 
   def check_data
     if MissouriDatum.last.new_file
       @downloads.each_with_index do |download, index|
@@ -93,12 +94,12 @@ class MoJob < ApplicationJob
     end 
   end 
 
-
+  # the method that actually uploads to s3
   def upload(obj, download) 
     obj.put(body: download)
   end
 
-
+  #logout of sftp and mail success 
   def logout 
     @@sftp.close_channel
     puts "Logged out"
